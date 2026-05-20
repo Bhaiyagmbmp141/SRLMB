@@ -1,0 +1,551 @@
+{
+  "Uuid": "b2c3d4e5-f6a7-8901-bcde-f12345678902",
+  "IsCustomNode": false,
+  "Description": "Writes 'Shree Radheladdumithumithuji' into the Comments parameter of selected Revit elements using native Dynamo nodes. Includes verification and element count output.",
+  "Name": "SetRevitComment_Design",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+
+    {
+      "ConcreteType": "Dynamo.Nodes.DSModelElementsSelection, DSRevitNodesUI",
+      "NodeType": "ExtensionNode",
+      "InstanceId": [],
+      "Id": "00000001-0000-0000-0000-000000000001",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "00000001-0000-0000-0000-000000000002",
+          "Name": "Elements",
+          "Description": "The selected elements.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Select multiple elements from the Revit document."
+    },
+
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "Comments",
+      "Id": "00000002-0000-0000-0000-000000000001",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "00000002-0000-0000-0000-000000000002",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Revit parameter name to target."
+    },
+
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "Shree Radheladdumithumithuji",
+      "Id": "00000003-0000-0000-0000-000000000001",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "00000003-0000-0000-0000-000000000002",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Comment text to write into the parameter."
+    },
+
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Revit.Elements.Element.SetParameterByName@string,var",
+      "Id": "00000004-0000-0000-0000-000000000001",
+      "Inputs": [
+        {
+          "Id": "00000004-0000-0000-0000-000000000002",
+          "Name": "element",
+          "Description": "Revit.Elements.Element",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "00000004-0000-0000-0000-000000000003",
+          "Name": "parameterName",
+          "Description": "The name of the parameter to set.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "00000004-0000-0000-0000-000000000004",
+          "Name": "value",
+          "Description": "The value.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "00000004-0000-0000-0000-000000000005",
+          "Name": "Element",
+          "Description": "Revit.Elements.Element",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Set one of the element's parameters by name."
+    },
+
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Revit.Elements.Element.GetParameterValueByName@string",
+      "Id": "00000005-0000-0000-0000-000000000001",
+      "Inputs": [
+        {
+          "Id": "00000005-0000-0000-0000-000000000002",
+          "Name": "element",
+          "Description": "Revit.Elements.Element",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "00000005-0000-0000-0000-000000000003",
+          "Name": "parameterName",
+          "Description": "The name of the parameter to get.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "00000005-0000-0000-0000-000000000004",
+          "Name": "var[]..[]",
+          "Description": "var[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Read back the Comments parameter to confirm the value was written."
+    },
+
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "DSCore.List.Count@var[]..[]",
+      "Id": "00000006-0000-0000-0000-000000000001",
+      "Inputs": [
+        {
+          "Id": "00000006-0000-0000-0000-000000000002",
+          "Name": "list",
+          "Description": "List to get the item count of.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "00000006-0000-0000-0000-000000000003",
+          "Name": "count",
+          "Description": "List length.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Count total number of selected elements."
+    },
+
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "00000007-0000-0000-0000-000000000001",
+      "Inputs": [
+        {
+          "Id": "00000007-0000-0000-0000-000000000002",
+          "Name": "",
+          "Description": "Node to evaluate.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "00000007-0000-0000-0000-000000000003",
+          "Name": "",
+          "Description": "Watch contents.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Updated elements list."
+    },
+
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "00000008-0000-0000-0000-000000000001",
+      "Inputs": [
+        {
+          "Id": "00000008-0000-0000-0000-000000000002",
+          "Name": "",
+          "Description": "Node to evaluate.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "00000008-0000-0000-0000-000000000003",
+          "Name": "",
+          "Description": "Watch contents.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Verified comment values read back from each element."
+    },
+
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "00000009-0000-0000-0000-000000000001",
+      "Inputs": [
+        {
+          "Id": "00000009-0000-0000-0000-000000000002",
+          "Name": "",
+          "Description": "Node to evaluate.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "00000009-0000-0000-0000-000000000003",
+          "Name": "",
+          "Description": "Watch contents.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Total element count processed."
+    }
+
+  ],
+  "Connectors": [
+    {
+      "Start": "00000001-0000-0000-0000-000000000002",
+      "End":   "00000004-0000-0000-0000-000000000002",
+      "Id":    "c0000001-0000-0000-0000-000000000001"
+    },
+    {
+      "Start": "00000002-0000-0000-0000-000000000002",
+      "End":   "00000004-0000-0000-0000-000000000003",
+      "Id":    "c0000001-0000-0000-0000-000000000002"
+    },
+    {
+      "Start": "00000003-0000-0000-0000-000000000002",
+      "End":   "00000004-0000-0000-0000-000000000004",
+      "Id":    "c0000001-0000-0000-0000-000000000003"
+    },
+    {
+      "Start": "00000004-0000-0000-0000-000000000005",
+      "End":   "00000007-0000-0000-0000-000000000002",
+      "Id":    "c0000001-0000-0000-0000-000000000004"
+    },
+    {
+      "Start": "00000004-0000-0000-0000-000000000005",
+      "End":   "00000005-0000-0000-0000-000000000002",
+      "Id":    "c0000001-0000-0000-0000-000000000005"
+    },
+    {
+      "Start": "00000002-0000-0000-0000-000000000002",
+      "End":   "00000005-0000-0000-0000-000000000003",
+      "Id":    "c0000001-0000-0000-0000-000000000006"
+    },
+    {
+      "Start": "00000005-0000-0000-0000-000000000004",
+      "End":   "00000008-0000-0000-0000-000000000002",
+      "Id":    "c0000001-0000-0000-0000-000000000007"
+    },
+    {
+      "Start": "00000001-0000-0000-0000-000000000002",
+      "End":   "00000006-0000-0000-0000-000000000002",
+      "Id":    "c0000001-0000-0000-0000-000000000008"
+    },
+    {
+      "Start": "00000006-0000-0000-0000-000000000003",
+      "End":   "00000009-0000-0000-0000-000000000002",
+      "Id":    "c0000001-0000-0000-0000-000000000009"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.19.0.0",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Name": "Select Model Elements",
+        "ShowGeometry": true,
+        "Id": "00000001-0000-0000-0000-000000000001",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 100.0,
+        "Y": 300.0
+      },
+      {
+        "Name": "Parameter Name  →  \"Comments\"",
+        "ShowGeometry": true,
+        "Id": "00000002-0000-0000-0000-000000000001",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 100.0,
+        "Y": 490.0
+      },
+      {
+        "Name": "Comment Value  →  \"Shree Radheladdumithumithuji\"",
+        "ShowGeometry": true,
+        "Id": "00000003-0000-0000-0000-000000000001",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 100.0,
+        "Y": 640.0
+      },
+      {
+        "Name": "Element.SetParameterByName",
+        "ShowGeometry": true,
+        "Id": "00000004-0000-0000-0000-000000000001",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 530.0,
+        "Y": 380.0
+      },
+      {
+        "Name": "Element.GetParameterValueByName",
+        "ShowGeometry": true,
+        "Id": "00000005-0000-0000-0000-000000000001",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 530.0,
+        "Y": 590.0
+      },
+      {
+        "Name": "List.Count",
+        "ShowGeometry": true,
+        "Id": "00000006-0000-0000-0000-000000000001",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 530.0,
+        "Y": 810.0
+      },
+      {
+        "Name": "Watch  |  Updated Elements",
+        "ShowGeometry": true,
+        "Id": "00000007-0000-0000-0000-000000000001",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": true,
+        "Excluded": false,
+        "X": 880.0,
+        "Y": 300.0
+      },
+      {
+        "Name": "Watch  |  Verified Comments",
+        "ShowGeometry": true,
+        "Id": "00000008-0000-0000-0000-000000000001",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": true,
+        "Excluded": false,
+        "X": 880.0,
+        "Y": 590.0
+      },
+      {
+        "Name": "Watch  |  Element Count",
+        "ShowGeometry": true,
+        "Id": "00000009-0000-0000-0000-000000000001",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": true,
+        "Excluded": false,
+        "X": 880.0,
+        "Y": 810.0
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "anno0001-0000-0000-0000-000000000001",
+        "Title": "Set Revit Comments Parameter  –  Shree Radheladdumithumithuji",
+        "DescriptionText": "Select elements in Revit  →  Click Run  →  Check Watch nodes for results",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [],
+        "HasNestedGroups": false,
+        "Left": 80.0,
+        "Top": 100.0,
+        "Width": 1100.0,
+        "Height": 130.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 100.0,
+        "InitialHeight": 130.0,
+        "TextblockHeight": 50.0,
+        "Background": "#FF9F4FBF"
+      },
+      {
+        "Id": "anno0002-0000-0000-0000-000000000001",
+        "Title": "INPUTS",
+        "DescriptionText": "Select elements in Revit canvas, then define the parameter name and comment text.",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "00000001-0000-0000-0000-000000000001",
+          "00000002-0000-0000-0000-000000000001",
+          "00000003-0000-0000-0000-000000000001"
+        ],
+        "HasNestedGroups": false,
+        "Left": 80.0,
+        "Top": 260.0,
+        "Width": 380.0,
+        "Height": 470.0,
+        "FontSize": 28.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 260.0,
+        "InitialHeight": 470.0,
+        "TextblockHeight": 40.0,
+        "Background": "#FF48B9FF"
+      },
+      {
+        "Id": "anno0003-0000-0000-0000-000000000001",
+        "Title": "PROCESS",
+        "DescriptionText": "Write the comment value, then read it back to confirm. Also count total elements.",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "00000004-0000-0000-0000-000000000001",
+          "00000005-0000-0000-0000-000000000001",
+          "00000006-0000-0000-0000-000000000001"
+        ],
+        "HasNestedGroups": false,
+        "Left": 500.0,
+        "Top": 340.0,
+        "Width": 320.0,
+        "Height": 560.0,
+        "FontSize": 28.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 340.0,
+        "InitialHeight": 560.0,
+        "TextblockHeight": 40.0,
+        "Background": "#FF71C6A8"
+      },
+      {
+        "Id": "anno0004-0000-0000-0000-000000000001",
+        "Title": "OUTPUTS",
+        "DescriptionText": "Review updated element list, verified comment values, and total count.",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "00000007-0000-0000-0000-000000000001",
+          "00000008-0000-0000-0000-000000000001",
+          "00000009-0000-0000-0000-000000000001"
+        ],
+        "HasNestedGroups": false,
+        "Left": 850.0,
+        "Top": 260.0,
+        "Width": 330.0,
+        "Height": 650.0,
+        "FontSize": 28.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 260.0,
+        "InitialHeight": 650.0,
+        "TextblockHeight": 40.0,
+        "Background": "#FFFFC15E"
+      }
+    ],
+    "X": 0.0,
+    "Y": 0.0,
+    "Zoom": 0.85
+  }
+}
