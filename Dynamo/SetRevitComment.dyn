@@ -1,0 +1,245 @@
+{
+  "Uuid": "a1b2c3d4-e5f6-7890-abcd-ef1234567891",
+  "IsCustomNode": false,
+  "Description": "Writes 'Shree Radheladdumithumithuji' into the Comments parameter of all selected Revit elements.",
+  "Name": "SetRevitComment",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "\"Shree Radheladdumithumithuji\";",
+      "Id": "cb000001-0000-0000-0000-000000000001",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "cb000001-0000-0000-0000-000000000002",
+          "Name": "",
+          "Description": "Value of expression at line 1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Comment text – change this string to update what is written."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "InputValue": true,
+      "Id": "bool0001-0000-0000-0000-000000000001",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "bool0001-0000-0000-0000-000000000002",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Set to True to run the script, False to pause."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "# Dynamo Python Script Node\nimport clr\nclr.AddReference('RevitAPI')\nclr.AddReference('RevitAPIUI')\nclr.AddReference('RevitServices')\n\nfrom Autodesk.Revit.DB import BuiltInParameter\nfrom RevitServices.Persistence import DocumentManager\nfrom RevitServices.Transactions import TransactionManager\n\ndoc   = DocumentManager.Instance.CurrentDBDocument\nuidoc = DocumentManager.Instance.CurrentUIApplication.ActiveUIDocument\n\ncomment_text = IN[0]\nrun_flag     = IN[1]\n\nif not run_flag:\n    OUT = \"Toggle Run to True to execute.\"\nelse:\n    selected_ids = uidoc.Selection.GetElementIds()\n    elements     = [doc.GetElement(eid) for eid in selected_ids]\n\n    if not elements:\n        OUT = \"No elements selected - select elements in Revit, then re-run.\"\n    else:\n        updated = []\n        skipped = []\n\n        TransactionManager.Instance.EnsureInTransaction(doc)\n\n        for el in elements:\n            param = el.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS)\n            if param is not None and not param.IsReadOnly:\n                param.Set(comment_text)\n                updated.append(el.Id.IntegerValue)\n            else:\n                skipped.append(el.Id.IntegerValue)\n\n        TransactionManager.Instance.TransactionTaskDone()\n\n        OUT = (\"Comment written : '{}'\\nUpdated ({}) IDs : {}\\nSkipped ({}) IDs : {}\").format(\n            comment_text, len(updated), updated, len(skipped), skipped\n        )",
+      "Engine": "CPython3",
+      "EngineName": "CPython3",
+      "VariableInputPorts": true,
+      "Id": "py000001-0000-0000-0000-000000000001",
+      "Inputs": [
+        {
+          "Id": "py000001-0000-0000-0000-000000000002",
+          "Name": "IN[0]",
+          "Description": "comment_text",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "py000001-0000-0000-0000-000000000003",
+          "Name": "IN[1]",
+          "Description": "run",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "py000001-0000-0000-0000-000000000004",
+          "Name": "OUT",
+          "Description": "Result",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Sets the Comments parameter on selected Revit elements."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "watch001-0000-0000-0000-000000000001",
+      "Inputs": [
+        {
+          "Id": "watch001-0000-0000-0000-000000000002",
+          "Name": "",
+          "Description": "Node to evaluate.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "watch001-0000-0000-0000-000000000003",
+          "Name": "",
+          "Description": "Watch contents.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualize the result."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "cb000001-0000-0000-0000-000000000002",
+      "End": "py000001-0000-0000-0000-000000000002",
+      "Id": "conn0001-0000-0000-0000-000000000001"
+    },
+    {
+      "Start": "bool0001-0000-0000-0000-000000000002",
+      "End": "py000001-0000-0000-0000-000000000003",
+      "Id": "conn0001-0000-0000-0000-000000000002"
+    },
+    {
+      "Start": "py000001-0000-0000-0000-000000000004",
+      "End": "watch001-0000-0000-0000-000000000002",
+      "Id": "conn0001-0000-0000-0000-000000000003"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [
+    {
+      "Name": "PythonNodeModels",
+      "Version": "3.0.0",
+      "ReferenceType": "Package",
+      "Nodes": [
+        "py000001-0000-0000-0000-000000000001"
+      ]
+    }
+  ],
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.19.0.0",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Name": "Comment Text",
+        "ShowGeometry": true,
+        "Id": "cb000001-0000-0000-0000-000000000001",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 50.0,
+        "Y": 200.0
+      },
+      {
+        "Name": "Run",
+        "ShowGeometry": true,
+        "Id": "bool0001-0000-0000-0000-000000000001",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 50.0,
+        "Y": 320.0
+      },
+      {
+        "Name": "Set Comments Parameter",
+        "ShowGeometry": true,
+        "Id": "py000001-0000-0000-0000-000000000001",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 350.0,
+        "Y": 200.0
+      },
+      {
+        "Name": "Result",
+        "ShowGeometry": true,
+        "Id": "watch001-0000-0000-0000-000000000001",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 650.0,
+        "Y": 200.0
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "anno0001-0000-0000-0000-000000000001",
+        "Title": "1  Select elements in Revit\n2  Set Run = True\n3  Watch node shows result",
+        "DescriptionText": null,
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [],
+        "HasNestedGroups": false,
+        "Left": 50.0,
+        "Top": 80.0,
+        "Width": 700.0,
+        "Height": 100.0,
+        "FontSize": 24.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 80.0,
+        "InitialHeight": 100.0,
+        "TextblockHeight": 36.0,
+        "Background": "#FFC1D676"
+      }
+    ],
+    "X": 0.0,
+    "Y": 0.0,
+    "Zoom": 1.0
+  }
+}
