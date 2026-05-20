@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+  <AddIn Type="Application">
+    <Name>SRLMB</Name>
+    <FullClassName>SRLMB.App</FullClassName>
+    <Assembly>SRLMB.dll</Assembly>
+    <AddInId>a1b2c3d4-e5f6-7890-abcd-ef1234567891</AddInId>
+    <VendorId>SRLMB</VendorId>
+    <VendorDescription>SRLMB – Shree Radheladdumithumithuji Revit Tools</VendorDescription>
+  </AddIn>
+</RevitAddIns>
