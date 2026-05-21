@@ -1,0 +1,289 @@
+{
+  "Uuid": "b2c3d4e5-f6a7-8901-bcde-f23456789012",
+  "IsCustomNode": false,
+  "Description": "Creates Revit Levels from a list of names and elevations (in millimetres).",
+  "Name": "CreateRevitLevels",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "{\"Ground Floor\", \"Level 1\", \"Level 2\", \"Level 3\", \"Roof\"};",
+      "Id": "cb1a0001-0000-0000-0000-000000000001",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "cb1a0001-0000-0000-0000-000000000002",
+          "Name": "",
+          "Description": "Value of expression at line 1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "List of level names – edit to suit your project."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "{0, 3000, 6000, 9000, 12000};",
+      "Id": "cb1b0001-0000-0000-0000-000000000001",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "cb1b0001-0000-0000-0000-000000000002",
+          "Name": "",
+          "Description": "Value of expression at line 1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Elevations in millimetres – one value per level name."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+      "NodeType": "BooleanInputNode",
+      "InputValue": false,
+      "Id": "bool1001-0000-0000-0000-000000000001",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "bool1001-0000-0000-0000-000000000002",
+          "Name": "",
+          "Description": "Boolean",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Set to True to run the script, False to pause."
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\nclr.AddReference('RevitAPI')\nclr.AddReference('RevitAPIUI')\nclr.AddReference('RevitServices')\n\nfrom Autodesk.Revit.DB import Level\nfrom RevitServices.Persistence import DocumentManager\nfrom RevitServices.Transactions import TransactionManager\n\ndoc = DocumentManager.Instance.CurrentDBDocument\n\nlevel_names   = IN[0] if isinstance(IN[0], list) else [IN[0]]\nelevations_mm = IN[1] if isinstance(IN[1], list) else [IN[1]]\nrun_flag      = IN[2]\n\nMM_TO_FT = 1.0 / 304.8\n\nif not run_flag:\n    OUT = \"Toggle the Run input to True to execute.\"\nelif len(level_names) != len(elevations_mm):\n    OUT = \"Error: Level names count ({}) must match elevations count ({}).\".format(\n        len(level_names), len(elevations_mm)\n    )\nelse:\n    created = []\n    skipped = []\n\n    TransactionManager.Instance.EnsureInTransaction(doc)\n\n    for name, elev_mm in zip(level_names, elevations_mm):\n        try:\n            elev_ft = float(elev_mm) * MM_TO_FT\n            level   = Level.Create(doc, elev_ft)\n            level.Name = str(name)\n            created.append(\"{} @ {} mm\".format(name, elev_mm))\n        except Exception as ex:\n            skipped.append(\"{}: {}\".format(name, str(ex)))\n\n    TransactionManager.Instance.TransactionTaskDone()\n\n    lines = [\"Created ({}) Level(s):\".format(len(created))]\n    lines += [\"  \" + s for s in created]\n    if skipped:\n        lines += [\"\", \"Skipped ({}) - already exists or name conflict:\".format(len(skipped))]\n        lines += [\"  \" + s for s in skipped]\n    OUT = \"\\n\".join(lines)",
+      "Engine": "CPython3",
+      "EngineName": "CPython3",
+      "VariableInputPorts": true,
+      "Id": "py1a0001-0000-0000-0000-000000000001",
+      "Inputs": [
+        {
+          "Id": "py1a0001-0000-0000-0000-000000000002",
+          "Name": "IN[0]",
+          "Description": "level_names",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "py1a0001-0000-0000-0000-000000000003",
+          "Name": "IN[1]",
+          "Description": "elevations_mm",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "py1a0001-0000-0000-0000-000000000004",
+          "Name": "IN[2]",
+          "Description": "run",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "py1a0001-0000-0000-0000-000000000005",
+          "Name": "OUT",
+          "Description": "Result",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Creates Revit Levels from names and millimetre elevations."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "watch1a01-0000-0000-0000-000000000001",
+      "Inputs": [
+        {
+          "Id": "watch1a01-0000-0000-0000-000000000002",
+          "Name": "",
+          "Description": "Node to evaluate.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "watch1a01-0000-0000-0000-000000000003",
+          "Name": "",
+          "Description": "Watch contents.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualize the result."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "cb1a0001-0000-0000-0000-000000000002",
+      "End": "py1a0001-0000-0000-0000-000000000002",
+      "Id": "conn1001-0000-0000-0000-000000000001"
+    },
+    {
+      "Start": "cb1b0001-0000-0000-0000-000000000002",
+      "End": "py1a0001-0000-0000-0000-000000000003",
+      "Id": "conn1001-0000-0000-0000-000000000002"
+    },
+    {
+      "Start": "bool1001-0000-0000-0000-000000000002",
+      "End": "py1a0001-0000-0000-0000-000000000004",
+      "Id": "conn1001-0000-0000-0000-000000000003"
+    },
+    {
+      "Start": "py1a0001-0000-0000-0000-000000000005",
+      "End": "watch1a01-0000-0000-0000-000000000002",
+      "Id": "conn1001-0000-0000-0000-000000000004"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [
+    {
+      "Name": "PythonNodeModels",
+      "Version": "3.0.0",
+      "ReferenceType": "Package",
+      "Nodes": [
+        "py1a0001-0000-0000-0000-000000000001"
+      ]
+    }
+  ],
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.19.0.0",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Name": "Level Names",
+        "ShowGeometry": true,
+        "Id": "cb1a0001-0000-0000-0000-000000000001",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 50.0,
+        "Y": 200.0
+      },
+      {
+        "Name": "Elevations (mm)",
+        "ShowGeometry": true,
+        "Id": "cb1b0001-0000-0000-0000-000000000001",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 50.0,
+        "Y": 340.0
+      },
+      {
+        "Name": "Run",
+        "ShowGeometry": true,
+        "Id": "bool1001-0000-0000-0000-000000000001",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 50.0,
+        "Y": 480.0
+      },
+      {
+        "Name": "Create Revit Levels",
+        "ShowGeometry": true,
+        "Id": "py1a0001-0000-0000-0000-000000000001",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 430.0,
+        "Y": 310.0
+      },
+      {
+        "Name": "Result",
+        "ShowGeometry": true,
+        "Id": "watch1a01-0000-0000-0000-000000000001",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 780.0,
+        "Y": 310.0
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "anno1001-0000-0000-0000-000000000001",
+        "Title": "1  Edit Level Names and Elevations (mm)\n2  Set Run = True\n3  Watch node shows created levels",
+        "DescriptionText": null,
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [],
+        "HasNestedGroups": false,
+        "Left": 30.0,
+        "Top": 50.0,
+        "Width": 900.0,
+        "Height": 120.0,
+        "FontSize": 24.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 50.0,
+        "InitialHeight": 120.0,
+        "TextblockHeight": 36.0,
+        "Background": "#FFC1D676"
+      }
+    ],
+    "X": 0.0,
+    "Y": 0.0,
+    "Zoom": 1.0
+  }
+}
