@@ -20,6 +20,14 @@ from Autodesk.Revit.DB import (
     BuiltInParameter,
     FilteredElementCollector,
 )
+
+
+def _eid(element_id):
+    # ElementId.IntegerValue removed in Revit 2024; .Value is the replacement.
+    try:
+        return element_id.Value
+    except AttributeError:
+        return element_id.IntegerValue
 from RevitServices.Persistence import DocumentManager
 from RevitServices.Transactions import TransactionManager
 
@@ -68,9 +76,9 @@ else:
             param = el.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS)
             if param is not None and not param.IsReadOnly:
                 param.Set(comment_text)
-                updated.append(el.Id.IntegerValue)
+                updated.append(_eid(el.Id))
             else:
-                skipped.append(el.Id.IntegerValue)
+                skipped.append(_eid(el.Id))
 
         TransactionManager.Instance.TransactionTaskDone()
 

@@ -30,6 +30,14 @@ COMMENT_TEXT = "Shree Radheladdumithumithuji"
 doc = __revit__.ActiveUIDocument.Document  # noqa: F821  (injected by RPS)
 
 
+def _eid(element_id):
+    # ElementId.IntegerValue removed in Revit 2024; .Value is the replacement.
+    try:
+        return element_id.Value
+    except AttributeError:
+        return element_id.IntegerValue
+
+
 def collect_all_components(document):
     """Return every model *instance* (non-type) element in the document."""
     collector = (
@@ -50,9 +58,9 @@ def set_comments(document, elements, text):
             param = el.get_Parameter(BuiltInParameter.ALL_MODEL_INSTANCE_COMMENTS)
             if param is not None and not param.IsReadOnly:
                 param.Set(text)
-                updated.append(el.Id.IntegerValue)
+                updated.append(_eid(el.Id))
             else:
-                skipped.append(el.Id.IntegerValue)
+                skipped.append(_eid(el.Id))
         t.Commit()
     except Exception as exc:
         t.RollBack()

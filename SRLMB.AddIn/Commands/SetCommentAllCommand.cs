@@ -64,7 +64,7 @@ namespace SRLMB.Commands
                     else
                     {
                         skipped++;
-                        skippedIds.Add(el.Id.IntegerValue);
+                        skippedIds.Add((int)el.Id.Value);
                     }
                 }
 
