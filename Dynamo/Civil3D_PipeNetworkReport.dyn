@@ -1,7 +1,7 @@
 {
-    "Uuid": "c3d0ain-0000-0000-0000-000000000001",
+    "Uuid": "08e147ad-8a41-4543-829c-fdc6b4b46c53",
     "IsCustomNode": false,
-    "Description": "Civil 3D \u2013 export all pipe network data (pipes + structures) to CSV with Manning's full-flow capacity per pipe.",
+    "Description": "Civil 3D \u2013 export all pipe network data to CSV with Manning full-flow capacity.",
     "Name": "Civil3D_PipeNetworkReport",
     "ElementResolver": {
         "ResolutionMap": {}
@@ -13,11 +13,11 @@
             "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
             "NodeType": "CodeBlockNode",
             "Code": "\"\";",
-            "Id": "in-folder-0000-0000-0000-000000000001",
+            "Id": "149b803f-cff9-4521-94e6-60ecb7df42e3",
             "Inputs": [],
             "Outputs": [
                 {
-                    "Id": "in-folder-0000-0000-0000-000000000002",
+                    "Id": "ac4334bb-dbc4-413e-b1b0-c8783a2d5165",
                     "Name": "",
                     "Description": "Value of expression at line 1",
                     "UsingDefaultValue": false,
@@ -33,11 +33,11 @@
             "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
             "NodeType": "BooleanInputNode",
             "InputValue": true,
-            "Id": "in-run---0000-0000-0000-000000000001",
+            "Id": "a5579277-c0d9-49bd-a81a-7283c5454d1f",
             "Inputs": [],
             "Outputs": [
                 {
-                    "Id": "in-run---0000-0000-0000-000000000002",
+                    "Id": "338c1034-40cc-415d-b0b8-f60d2a88367c",
                     "Name": "",
                     "Description": "Boolean",
                     "UsingDefaultValue": false,
@@ -56,10 +56,10 @@
             "Engine": "CPython3",
             "EngineName": "CPython3",
             "VariableInputPorts": true,
-            "Id": "py-main-0000-0000-0000-000000000001",
+            "Id": "978fb9a7-62a7-4c04-a6d3-58d59100d306",
             "Inputs": [
                 {
-                    "Id": "py-main-0000-0000-0000-000000000010",
+                    "Id": "b37763cc-4db9-46d0-9332-753ec3ce939a",
                     "Name": "IN[0]",
                     "Description": "output_folder",
                     "UsingDefaultValue": false,
@@ -68,7 +68,7 @@
                     "KeepListStructure": false
                 },
                 {
-                    "Id": "py-main-0000-0000-0000-000000000011",
+                    "Id": "0f5650ad-cc3d-4d53-b50b-3438371c18c6",
                     "Name": "IN[1]",
                     "Description": "run",
                     "UsingDefaultValue": false,
@@ -79,7 +79,7 @@
             ],
             "Outputs": [
                 {
-                    "Id": "py-main-0000-0000-0000-000000000099",
+                    "Id": "08ee83f1-df28-4ae5-9e92-e8aa4f504e82",
                     "Name": "OUT",
                     "Description": "Result",
                     "UsingDefaultValue": false,
@@ -89,15 +89,15 @@
                 }
             ],
             "Replication": "Disabled",
-            "Description": "Civil 3D \u2013 export all pipe network data (pipes + structures) to CSV with Manning's full-flow capacity per pipe."
+            "Description": "Civil 3D \u2013 export all pipe network data to CSV with Manning full-flow capacity."
         },
         {
             "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
             "NodeType": "ExtensionNode",
-            "Id": "watch-000-0000-0000-0000-000000000001",
+            "Id": "501b10a1-c396-4d53-9b23-7850bfa2c823",
             "Inputs": [
                 {
-                    "Id": "watch-000-0000-0000-0000-000000000002",
+                    "Id": "c11173e0-30e1-4e45-b007-6c58d9baf14a",
                     "Name": "",
                     "Description": "Node to evaluate.",
                     "UsingDefaultValue": false,
@@ -108,7 +108,7 @@
             ],
             "Outputs": [
                 {
-                    "Id": "watch-000-0000-0000-0000-000000000003",
+                    "Id": "17deb2dd-16c1-4e20-b704-49ce612f7756",
                     "Name": "",
                     "Description": "Watch contents.",
                     "UsingDefaultValue": false,
@@ -123,19 +123,19 @@
     ],
     "Connectors": [
         {
-            "Start": "in-folder-0000-0000-0000-000000000002",
-            "End": "py-main-0000-0000-0000-000000000010",
-            "Id": "conn-0000-0000-0000-0000-000000000001"
+            "Start": "ac4334bb-dbc4-413e-b1b0-c8783a2d5165",
+            "End": "b37763cc-4db9-46d0-9332-753ec3ce939a",
+            "Id": "cd9ae302-309e-4f56-8db8-fab09a67ab00"
         },
         {
-            "Start": "in-run---0000-0000-0000-000000000002",
-            "End": "py-main-0000-0000-0000-000000000011",
-            "Id": "conn-0001-0000-0000-0000-000000000001"
+            "Start": "338c1034-40cc-415d-b0b8-f60d2a88367c",
+            "End": "0f5650ad-cc3d-4d53-b50b-3438371c18c6",
+            "Id": "70cd507e-386b-40dc-b775-2ff560bd668b"
         },
         {
-            "Start": "py-main-0000-0000-0000-000000000099",
-            "End": "watch-000-0000-0000-0000-000000000002",
-            "Id": "conn-out-0000-0000-0000-000000000001"
+            "Start": "08ee83f1-df28-4ae5-9e92-e8aa4f504e82",
+            "End": "c11173e0-30e1-4e45-b007-6c58d9baf14a",
+            "Id": "298425c9-dcfe-4fac-b0e6-2c26a4626c67"
         }
     ],
     "Dependencies": [],
@@ -145,7 +145,7 @@
             "Version": "3.0.0",
             "ReferenceType": "Package",
             "Nodes": [
-                "py-main-0000-0000-0000-000000000001"
+                "978fb9a7-62a7-4c04-a6d3-58d59100d306"
             ]
         }
     ],
@@ -155,7 +155,7 @@
     "View": {
         "Dynamo": {
             "ScaleFactor": 1.0,
-            "HasRunWithoutCrash": true,
+            "HasRunWithoutCrash": false,
             "IsVisibleInDynamoLibrary": true,
             "Version": "2.19.0.0",
             "RunType": "Manual",
@@ -178,7 +178,7 @@
             {
                 "Name": "Output Folder (blank = drawing folder)",
                 "ShowGeometry": true,
-                "Id": "in-folder-0000-0000-0000-000000000001",
+                "Id": "149b803f-cff9-4521-94e6-60ecb7df42e3",
                 "IsSetAsInput": true,
                 "IsSetAsOutput": false,
                 "Excluded": false,
@@ -188,7 +188,7 @@
             {
                 "Name": "Run",
                 "ShowGeometry": true,
-                "Id": "in-run---0000-0000-0000-000000000001",
+                "Id": "a5579277-c0d9-49bd-a81a-7283c5454d1f",
                 "IsSetAsInput": true,
                 "IsSetAsOutput": false,
                 "Excluded": false,
@@ -198,21 +198,21 @@
             {
                 "Name": "Civil3D_PipeNetworkReport",
                 "ShowGeometry": true,
-                "Id": "py-main-0000-0000-0000-000000000001",
+                "Id": "978fb9a7-62a7-4c04-a6d3-58d59100d306",
                 "IsSetAsInput": false,
                 "IsSetAsOutput": false,
                 "Excluded": false,
-                "X": 450.0,
+                "X": 500.0,
                 "Y": 200.0
             },
             {
                 "Name": "Result",
                 "ShowGeometry": true,
-                "Id": "watch-000-0000-0000-0000-000000000001",
+                "Id": "501b10a1-c396-4d53-9b23-7850bfa2c823",
                 "IsSetAsInput": false,
                 "IsSetAsOutput": false,
                 "Excluded": false,
-                "X": 850.0,
+                "X": 920.0,
                 "Y": 200.0
             }
         ],
