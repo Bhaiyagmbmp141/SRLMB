@@ -1,7 +1,7 @@
 {
   "Uuid": "b2c3d4e5-f6a7-8901-bcde-f23456789012",
   "IsCustomNode": false,
-  "Description": "Creates Revit Levels from a list of names and elevations (in millimetres) using DesignScript.",
+  "Description": "Creates Revit Levels from names and elevations defined inside a single DesignScript code block.",
   "Name": "CreateRevitLevels",
   "ElementResolver": {
     "ResolutionMap": {}
@@ -12,51 +12,21 @@
     {
       "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
       "NodeType": "CodeBlockNode",
-      "Code": "[\"Ground Floor\", \"Level 1\", \"Level 2\", \"Level 3\", \"Roof\"];",
-      "Id": "cb2a0001-0000-0000-0000-000000000001",
+      "Code": "names         = [\"Ground Floor\", \"Level 1\", \"Level 2\", \"Level 3\", \"Roof\"];\nelevations_mm = [0, 3000, 6000, 9000, 12000];\nlevels        = Revit.Elements.Level.ByElevation(elevations_mm / 1000.0);\nnamed         = levels.SetParameterByName(\"Name\", names);",
+      "Id": "cb3a0001-0000-0000-0000-000000000001",
       "Inputs": [],
       "Outputs": [
         {
-          "Id": "cb2a0001-0000-0000-0000-000000000002",
-          "Name": "",
-          "Description": "Value of expression at line 1",
+          "Id": "cb3a0001-0000-0000-0000-000000000002",
+          "Name": "names",
+          "Description": "names",
           "UsingDefaultValue": false,
           "Level": 2,
           "UseLevels": false,
           "KeepListStructure": false
-        }
-      ],
-      "Replication": "Disabled",
-      "Description": "List of level names - edit to suit your project."
-    },
-    {
-      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
-      "NodeType": "CodeBlockNode",
-      "Code": "[0, 3000, 6000, 9000, 12000];",
-      "Id": "cb2b0001-0000-0000-0000-000000000001",
-      "Inputs": [],
-      "Outputs": [
+        },
         {
-          "Id": "cb2b0001-0000-0000-0000-000000000002",
-          "Name": "",
-          "Description": "Value of expression at line 1",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Replication": "Disabled",
-      "Description": "Elevations in millimetres - one value per level name."
-    },
-    {
-      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
-      "NodeType": "CodeBlockNode",
-      "Code": "levels = Revit.Elements.Level.ByElevation(elevations_mm / 1000.0);\nnamed = levels.SetParameterByName(\"Name\", names);",
-      "Id": "cb2c0001-0000-0000-0000-000000000001",
-      "Inputs": [
-        {
-          "Id": "cb2c0001-0000-0000-0000-000000000002",
+          "Id": "cb3a0001-0000-0000-0000-000000000003",
           "Name": "elevations_mm",
           "Description": "elevations_mm",
           "UsingDefaultValue": false,
@@ -65,18 +35,7 @@
           "KeepListStructure": false
         },
         {
-          "Id": "cb2c0001-0000-0000-0000-000000000003",
-          "Name": "names",
-          "Description": "names",
-          "UsingDefaultValue": false,
-          "Level": 2,
-          "UseLevels": false,
-          "KeepListStructure": false
-        }
-      ],
-      "Outputs": [
-        {
-          "Id": "cb2c0001-0000-0000-0000-000000000004",
+          "Id": "cb3a0001-0000-0000-0000-000000000004",
           "Name": "levels",
           "Description": "levels",
           "UsingDefaultValue": false,
@@ -85,7 +44,7 @@
           "KeepListStructure": false
         },
         {
-          "Id": "cb2c0001-0000-0000-0000-000000000005",
+          "Id": "cb3a0001-0000-0000-0000-000000000005",
           "Name": "named",
           "Description": "named",
           "UsingDefaultValue": false,
@@ -95,15 +54,15 @@
         }
       ],
       "Replication": "Disabled",
-      "Description": "Creates Revit levels at the given elevations and sets their names using DesignScript."
+      "Description": "Edit lines 1-2 to change level names and elevations. Line 3 creates the levels; line 4 sets their names."
     },
     {
       "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
       "NodeType": "ExtensionNode",
-      "Id": "watch2a01-0000-0000-0000-000000000001",
+      "Id": "watch3a01-0000-0000-0000-000000000001",
       "Inputs": [
         {
-          "Id": "watch2a01-0000-0000-0000-000000000002",
+          "Id": "watch3a01-0000-0000-0000-000000000002",
           "Name": "",
           "Description": "Node to evaluate.",
           "UsingDefaultValue": false,
@@ -114,7 +73,7 @@
       ],
       "Outputs": [
         {
-          "Id": "watch2a01-0000-0000-0000-000000000003",
+          "Id": "watch3a01-0000-0000-0000-000000000003",
           "Name": "",
           "Description": "Watch contents.",
           "UsingDefaultValue": false,
@@ -129,19 +88,9 @@
   ],
   "Connectors": [
     {
-      "Start": "cb2a0001-0000-0000-0000-000000000002",
-      "End": "cb2c0001-0000-0000-0000-000000000003",
-      "Id": "conn2001-0000-0000-0000-000000000001"
-    },
-    {
-      "Start": "cb2b0001-0000-0000-0000-000000000002",
-      "End": "cb2c0001-0000-0000-0000-000000000002",
-      "Id": "conn2001-0000-0000-0000-000000000002"
-    },
-    {
-      "Start": "cb2c0001-0000-0000-0000-000000000005",
-      "End": "watch2a01-0000-0000-0000-000000000002",
-      "Id": "conn2001-0000-0000-0000-000000000003"
+      "Start": "cb3a0001-0000-0000-0000-000000000005",
+      "End": "watch3a01-0000-0000-0000-000000000002",
+      "Id": "conn3001-0000-0000-0000-000000000001"
     }
   ],
   "Dependencies": [],
@@ -173,9 +122,9 @@
     "ConnectorPins": [],
     "NodeViews": [
       {
-        "Name": "Level Names",
+        "Name": "Create Revit Levels",
         "ShowGeometry": true,
-        "Id": "cb2a0001-0000-0000-0000-000000000001",
+        "Id": "cb3a0001-0000-0000-0000-000000000001",
         "IsSetAsInput": true,
         "IsSetAsOutput": false,
         "Excluded": false,
@@ -183,40 +132,20 @@
         "Y": 200.0
       },
       {
-        "Name": "Elevations (mm)",
-        "ShowGeometry": true,
-        "Id": "cb2b0001-0000-0000-0000-000000000001",
-        "IsSetAsInput": true,
-        "IsSetAsOutput": false,
-        "Excluded": false,
-        "X": 50.0,
-        "Y": 340.0
-      },
-      {
-        "Name": "Create Revit Levels",
-        "ShowGeometry": true,
-        "Id": "cb2c0001-0000-0000-0000-000000000001",
-        "IsSetAsInput": false,
-        "IsSetAsOutput": false,
-        "Excluded": false,
-        "X": 430.0,
-        "Y": 260.0
-      },
-      {
         "Name": "Result",
         "ShowGeometry": true,
-        "Id": "watch2a01-0000-0000-0000-000000000001",
+        "Id": "watch3a01-0000-0000-0000-000000000001",
         "IsSetAsInput": false,
         "IsSetAsOutput": false,
         "Excluded": false,
-        "X": 780.0,
-        "Y": 260.0
+        "X": 600.0,
+        "Y": 200.0
       }
     ],
     "Annotations": [
       {
-        "Id": "anno2001-0000-0000-0000-000000000001",
-        "Title": "1  Edit Level Names and Elevations (mm)\n2  Click Run  -  levels appear in Revit immediately",
+        "Id": "anno3001-0000-0000-0000-000000000001",
+        "Title": "1  Edit lines 1-2 in the code block (names + elevations)\n2  Click Run  -  levels appear in Revit immediately",
         "DescriptionText": null,
         "IsExpanded": true,
         "WidthAdjustment": 0.0,
@@ -225,7 +154,7 @@
         "HasNestedGroups": false,
         "Left": 30.0,
         "Top": 50.0,
-        "Width": 900.0,
+        "Width": 750.0,
         "Height": 120.0,
         "FontSize": 24.0,
         "GroupStyleId": "00000000-0000-0000-0000-000000000000",
