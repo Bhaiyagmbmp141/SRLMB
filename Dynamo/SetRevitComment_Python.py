@@ -26,9 +26,16 @@ from RevitServices.Transactions import TransactionManager
 doc   = DocumentManager.Instance.CurrentDBDocument
 uidoc = DocumentManager.Instance.CurrentUIApplication.ActiveUIDocument
 
-comment_text   = IN[0]   # noqa: F821
-all_components = IN[1]   # noqa: F821
-run_flag       = IN[2]   # noqa: F821
+# IN[] is injected by Dynamo; when run in RevitPythonShell it is absent.
+try:
+    comment_text   = IN[0]   # noqa: F821
+    all_components = IN[1]   # noqa: F821
+    run_flag       = IN[2]   # noqa: F821
+except NameError:
+    # RevitPythonShell fallback – edit these defaults as needed
+    comment_text   = "Shree Radheladdumithumithuji"
+    all_components = True
+    run_flag       = True
 
 if not run_flag:
     OUT = "Set the Run input to True to execute."
