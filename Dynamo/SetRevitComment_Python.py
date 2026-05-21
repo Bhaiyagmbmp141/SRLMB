@@ -3,35 +3,54 @@
 # Paste this code into a Python Script node in Dynamo.
 #
 # Inputs:
-#   IN[0]  - comment_text  : string to write (e.g. "Shree Radheladdumithumithuji")
-#   IN[1]  - run           : Boolean toggle – set to True to execute
+#   IN[0]  - comment_text   : string to write (e.g. "Shree Radheladdumithumithuji")
+#   IN[1]  - all_components : Boolean – True  → process ALL model instances
+#                                       False → process only the current Revit selection
+#   IN[2]  - run            : Boolean toggle – set to True to execute
 #
 # Output:
 #   OUT    - result summary string
 
 import clr
-clr.AddReference('RevitAPI')
-clr.AddReference('RevitAPIUI')
-clr.AddReference('RevitServices')
+clr.AddReference("RevitAPI")
+clr.AddReference("RevitAPIUI")
+clr.AddReference("RevitServices")
 
-from Autodesk.Revit.DB import BuiltInParameter
+from Autodesk.Revit.DB import (
+    BuiltInParameter,
+    FilteredElementCollector,
+)
 from RevitServices.Persistence import DocumentManager
 from RevitServices.Transactions import TransactionManager
 
 doc   = DocumentManager.Instance.CurrentDBDocument
 uidoc = DocumentManager.Instance.CurrentUIApplication.ActiveUIDocument
 
-comment_text = IN[0]
-run_flag     = IN[1]
+comment_text   = IN[0]   # noqa: F821
+all_components = IN[1]   # noqa: F821
+run_flag       = IN[2]   # noqa: F821
 
 if not run_flag:
-    OUT = "Toggle the Run input to True to execute."
+    OUT = "Set the Run input to True to execute."
 else:
-    selected_ids = uidoc.Selection.GetElementIds()
-    elements     = [doc.GetElement(eid) for eid in selected_ids]
+    # ── element collection ────────────────────────────────────────────────
+    if all_components:
+        elements = list(
+            FilteredElementCollector(doc)
+            .WhereElementIsNotElementType()
+            .WhereElementIsViewIndependent()
+        )
+        source_label = "all model components"
+    else:
+        selected_ids = uidoc.Selection.GetElementIds()
+        elements     = [doc.GetElement(eid) for eid in selected_ids]
+        source_label = "selection"
 
     if not elements:
-        OUT = "No elements selected – select elements in Revit, then re-run."
+        OUT = (
+            "No elements found (source: {}).\n"
+            "If using selection mode, select elements in Revit first."
+        ).format(source_label)
     else:
         updated = []
         skipped = []
@@ -49,11 +68,13 @@ else:
         TransactionManager.Instance.TransactionTaskDone()
 
         OUT = (
-            "Comment written : '{}'\n"
-            "Updated ({}) IDs : {}\n"
-            "Skipped ({}) IDs : {}"
+            "Source        : {}\n"
+            "Comment text  : '{}'\n"
+            "Updated ({})  IDs : {}\n"
+            "Skipped ({})  IDs : {}"
         ).format(
+            source_label,
             comment_text,
             len(updated), updated,
-            len(skipped), skipped
+            len(skipped), skipped,
         )
