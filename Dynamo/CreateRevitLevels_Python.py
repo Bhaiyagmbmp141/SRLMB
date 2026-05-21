@@ -1,11 +1,27 @@
 # -*- coding: utf-8 -*-
-# Dynamo Python Script Node – Create Revit Levels
-# Paste this code into a Python Script node in Dynamo.
+# DesignScript equivalent used in CreateRevitLevels.dyn
+# -------------------------------------------------------
+# The .dyn graph uses two DesignScript Code Block nodes as editable inputs
+# and one DesignScript Code Block as the engine:
+#
+#   Level Names CB:
+#     ["Ground Floor", "Level 1", "Level 2", "Level 3", "Roof"];
+#
+#   Elevations (mm) CB:
+#     [0, 3000, 6000, 9000, 12000];
+#
+#   Create Levels CB  (takes names, elevations_mm as inputs):
+#     levels = Revit.Elements.Level.ByElevation(elevations_mm / 1000.0);
+#     named  = levels.SetParameterByName("Name", names);
+#
+# -------------------------------------------------------
+# Python reference – paste into a Python Script node if you prefer
+# a Python-based approach over DesignScript.
 #
 # Inputs:
-#   IN[0]  - level_names   : list of strings  (e.g. ["Ground", "L1", "L2"])
-#   IN[1]  - elevations_mm : list of numbers  (elevation in millimetres, e.g. [0, 3000, 6000])
-#   IN[2]  - run           : Boolean toggle – set True to execute
+#   IN[0]  - level_names   : list of strings  e.g. ["Ground", "L1", "L2"]
+#   IN[1]  - elevations_mm : list of numbers  e.g. [0, 3000, 6000]
+#   IN[2]  - run           : Boolean – True to execute
 #
 # Output:
 #   OUT    - result summary string
@@ -53,6 +69,6 @@ else:
     lines = ["Created ({}) Level(s):".format(len(created))]
     lines += ["  " + s for s in created]
     if skipped:
-        lines += ["", "Skipped ({}) – already exists or name conflict:".format(len(skipped))]
+        lines += ["", "Skipped ({}) - already exists or name conflict:".format(len(skipped))]
         lines += ["  " + s for s in skipped]
     OUT = "\n".join(lines)
