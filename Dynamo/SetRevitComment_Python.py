@@ -26,16 +26,16 @@ from RevitServices.Transactions import TransactionManager
 doc   = DocumentManager.Instance.CurrentDBDocument
 uidoc = DocumentManager.Instance.CurrentUIApplication.ActiveUIDocument
 
-# IN[] is injected by Dynamo; when run in RevitPythonShell it is absent.
+# IN[] is injected by Dynamo; absent in RevitPythonShell, or may have
+# fewer items than expected when not all ports are wired.
 try:
-    comment_text   = IN[0]   # noqa: F821
-    all_components = IN[1]   # noqa: F821
-    run_flag       = IN[2]   # noqa: F821
+    _in = list(IN)  # noqa: F821
 except NameError:
-    # RevitPythonShell fallback – edit these defaults as needed
-    comment_text   = "Shree Radheladdumithumithuji"
-    all_components = True
-    run_flag       = True
+    _in = []
+
+comment_text   = _in[0] if len(_in) > 0 else "Shree Radheladdumithumithuji"
+all_components = _in[1] if len(_in) > 1 else True
+run_flag       = _in[2] if len(_in) > 2 else True
 
 if not run_flag:
     OUT = "Set the Run input to True to execute."
