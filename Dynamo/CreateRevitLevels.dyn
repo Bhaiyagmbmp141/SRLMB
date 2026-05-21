@@ -12,7 +12,7 @@
     {
       "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
       "NodeType": "CodeBlockNode",
-      "Code": "names         = [\"Ground Floor\", \"Level 1\", \"Level 2\", \"Level 3\", \"Roof\"];\nelevations_mm = [0, 3000, 6000, 9000, 12000];\nlevels        = Revit.Elements.Level.ByElevation(elevations_mm / 1000.0);\nnamed         = levels.SetParameterByName(\"Name\", names);",
+      "Code": "names         = [\"SRLMB - GF\", \"SRLMB - L1\", \"SRLMB - L2\", \"SRLMB - L3\", \"SRLMB - Roof\"];\nelevations_mm = [0, 3000, 6000, 9000, 12000];\nlevels        = Revit.Elements.Level.ByElevation(elevations_mm);\nnamed         = levels.SetParameterByName(\"Name\", names);",
       "Id": "cb3a0001-0000-0000-0000-000000000001",
       "Inputs": [],
       "Outputs": [
