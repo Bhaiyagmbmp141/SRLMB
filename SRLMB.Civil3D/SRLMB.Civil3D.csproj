@@ -1,0 +1,60 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <AssemblyName>SRLMB.Civil3D</AssemblyName>
+    <RootNamespace>SRLMB.Civil3D</RootNamespace>
+    <LangVersion>9</LangVersion>
+    <Nullable>enable</Nullable>
+    <PlatformTarget>x64</PlatformTarget>
+    <!-- Copy PackageContents.xml next to the DLL so autoload works -->
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+
+  <!--
+    Set ACADPath / C3DPath before building, e.g.:
+      msbuild /p:ACADPath="C:\Program Files\Autodesk\AutoCAD 2024"
+    Civil 3D lives in the same folder as AutoCAD on most installs.
+  -->
+  <PropertyGroup>
+    <ACADPath Condition="'$(ACADPath)'==''">C:\Program Files\Autodesk\AutoCAD 2024</ACADPath>
+    <C3DPath  Condition="'$(C3DPath)'==''">$(ACADPath)</C3DPath>
+  </PropertyGroup>
+
+  <!-- AutoCAD managed assemblies -->
+  <ItemGroup>
+    <Reference Include="acmgd">
+      <HintPath>$(ACADPath)\acmgd.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="acdbmgd">
+      <HintPath>$(ACADPath)\acdbmgd.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="accoremgd">
+      <HintPath>$(ACADPath)\accoremgd.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!-- Civil 3D managed assemblies -->
+  <ItemGroup>
+    <Reference Include="AeccXUiLand">
+      <HintPath>$(C3DPath)\AeccXUiLand.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="AeccDbMgd">
+      <HintPath>$(C3DPath)\AeccDbMgd.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!-- Copy PackageContents.xml to output directory -->
+  <ItemGroup>
+    <None Update="Resources\PackageContents.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>PackageContents.xml</TargetPath>
+    </None>
+  </ItemGroup>
+
+</Project>

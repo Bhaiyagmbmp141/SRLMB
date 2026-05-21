@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  AutoCAD Plug-in Package descriptor.
+  Deploy the entire output folder to:
+    %APPDATA%\Autodesk\ApplicationPlugins\SRLMB.Civil3D.bundle\
+  Civil 3D will auto-load the DLL on startup.
+-->
+<ApplicationPackage SchemaVersion="1.0" AppVersion="1.0.0"
+                    ProductType="Application"
+                    Name="SRLMB.Civil3D"
+                    Description="SRLMB Civil 3D – Pipe Network Report &amp; Sizing"
+                    Author="SRLMB">
+
+  <RuntimeRequirements OS="Win64" Platform="AutoCAD Civil 3D*"
+                       SeriesMin="R24.0" SeriesMax="*"/>
+
+  <Components>
+    <RuntimeRequirements OS="Win64" Platform="AutoCAD Civil 3D*"
+                         SeriesMin="R24.0" SeriesMax="*"/>
+    <ComponentEntry ModuleName="./SRLMB.Civil3D.dll"
+                    AppName="SRLMB.Civil3D"
+                    LoadOnCommandInvocation="False"
+                    LoadOnAutoCADStartup="True"/>
+  </Components>
+
+</ApplicationPackage>
