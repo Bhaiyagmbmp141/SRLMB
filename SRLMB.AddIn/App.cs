@@ -14,20 +14,34 @@ namespace SRLMB
 
                 RibbonPanel panel = app.CreateRibbonPanel("SRLMB");
 
-                var btnData = new PushButtonData(
-                    name:        "SetCommentBtn",
-                    text:        "Set\nComment",
+                var btnSelection = new PushButtonData(
+                    name:         "SetCommentBtn",
+                    text:         "Set Comment\n(Selection)",
                     assemblyName: assemblyPath,
-                    className:   "SRLMB.Commands.SetCommentCommand")
+                    className:    "SRLMB.Commands.SetCommentCommand")
                 {
-                    ToolTip = "Write 'Shree Radheladdumithumithuji' into the Comments parameter of selected elements.",
+                    ToolTip = "Write the text package into the Comments parameter of selected elements.",
                     LongDescription =
                         "Select one or more elements in the Revit model, then click this button.\n" +
                         "The Comments parameter of every selected element will be set to:\n" +
                         "\"Shree Radheladdumithumithuji\""
                 };
 
-                panel.AddItem(btnData);
+                var btnAll = new PushButtonData(
+                    name:         "SetCommentAllBtn",
+                    text:         "Set Comment\n(All)",
+                    assemblyName: assemblyPath,
+                    className:    "SRLMB.Commands.SetCommentAllCommand")
+                {
+                    ToolTip = "Write the text package into the Comments parameter of ALL model components.",
+                    LongDescription =
+                        "No selection required. Applies to every view-independent model instance in the document.\n" +
+                        "The Comments parameter will be set to:\n" +
+                        "\"Shree Radheladdumithumithuji\""
+                };
+
+                panel.AddItem(btnSelection);
+                panel.AddItem(btnAll);
                 return Result.Succeeded;
             }
             catch (Exception ex)
