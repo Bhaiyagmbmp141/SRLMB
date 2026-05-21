@@ -1,0 +1,224 @@
+{
+    "Uuid": "c3d0ain-0000-0000-0000-000000000001",
+    "IsCustomNode": false,
+    "Description": "Civil 3D \u2013 Manning's pipe sizing check. Flags under-sized pipes and recommends next standard diameter.",
+    "Name": "Civil3D_PipeNetworkSize",
+    "ElementResolver": {
+        "ResolutionMap": {}
+    },
+    "Inputs": [],
+    "Outputs": [],
+    "Nodes": [
+        {
+            "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+            "NodeType": "CodeBlockNode",
+            "Code": "0;",
+            "Id": "in-flow--0000-0000-0000-000000000001",
+            "Inputs": [],
+            "Outputs": [
+                {
+                    "Id": "in-flow--0000-0000-0000-000000000002",
+                    "Name": "",
+                    "Description": "Value of expression at line 1",
+                    "UsingDefaultValue": false,
+                    "Level": 2,
+                    "UseLevels": false,
+                    "KeepListStructure": false
+                }
+            ],
+            "Replication": "Disabled",
+            "Description": "Design Flow (L/s) \u2013 0 = capacity display only"
+        },
+        {
+            "ConcreteType": "CoreNodeModels.Input.BoolSelector, CoreNodeModels",
+            "NodeType": "BooleanInputNode",
+            "InputValue": true,
+            "Id": "in-run---0000-0000-0000-000000000003",
+            "Inputs": [],
+            "Outputs": [
+                {
+                    "Id": "in-run---0000-0000-0000-000000000004",
+                    "Name": "",
+                    "Description": "Boolean",
+                    "UsingDefaultValue": false,
+                    "Level": 2,
+                    "UseLevels": false,
+                    "KeepListStructure": false
+                }
+            ],
+            "Replication": "Disabled",
+            "Description": "Run"
+        },
+        {
+            "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+            "NodeType": "PythonScriptNode",
+            "Code": "# -*- coding: utf-8 -*-\n# Dynamo for Civil 3D \u2013 Pipe Network Sizing Check (Manning's equation)\n# Paste this code into a Python Script node in Dynamo for Civil 3D.\n#\n# Inputs:\n#   IN[0] - design_flow_ls : design flow in L/s applied to all pipes (0 = capacity-display only)\n#   IN[1] - run            : Boolean toggle \u2013 set True to execute\n#\n# Output:\n#   OUT - formatted sizing report string\n\nimport clr, math\n\nclr.AddReference('AeccDbMgd')\nclr.AddReference('AeccXUiLand')\nclr.AddReference('acmgd')\nclr.AddReference('acdbmgd')\nclr.AddReference('accoremgd')\n\nfrom Autodesk.Civil.ApplicationServices import CivilApplication\nfrom Autodesk.Civil.DatabaseServices import Network, Pipe\nfrom Autodesk.AutoCAD.ApplicationServices import Application as AcadApp\nfrom Autodesk.AutoCAD.DatabaseServices import OpenMode\n\n# \u2500\u2500 constants \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nSTANDARD_SIZES_MM = [\n    100, 150, 200, 225, 250, 300, 375, 450,\n    525, 600, 675, 750, 825, 900, 1050, 1200, 1350, 1500,\n]\n\nN_VALUES = {\n    'concrete': 0.013, 'reinforced concrete': 0.013, 'rcp': 0.013,\n    'hdpe': 0.009, 'pvc': 0.009, 'upvc': 0.009,\n    'ductile iron': 0.012, 'cast iron': 0.013, 'steel': 0.011,\n    'clay': 0.013, 'vitrified clay': 0.012,\n    'corrugated metal': 0.024, 'cmp': 0.024,\n}\n\n# \u2500\u2500 helpers \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\ndef get_n(material):\n    return N_VALUES.get((material or '').lower(), 0.013)\n\ndef full_flow_ls(dia_m, slope_mm, n):\n    \"\"\"Manning's full-flow capacity in L/s for a circular pipe.\"\"\"\n    if dia_m <= 0 or slope_mm <= 0 or n <= 0:\n        return 0.0\n    area = math.pi * dia_m * dia_m / 4.0\n    r    = dia_m / 4.0\n    return (1.0 / n) * area * (r ** (2.0 / 3.0)) * math.sqrt(slope_mm) * 1000.0\n\ndef recommend_dia_m(required_ls, slope, n):\n    \"\"\"Returns smallest standard diameter (metres) that meets required_ls.\"\"\"\n    for mm in STANDARD_SIZES_MM:\n        d = mm / 1000.0\n        if full_flow_ls(d, slope, n) >= required_ls:\n            return d\n    return STANDARD_SIZES_MM[-1] / 1000.0\n\ndef evaluate_status(slope, design_ls, qfull_ls, check_flow):\n    if slope * 100.0 < 0.3:\n        return 'WARN: slope < 0.3%',  True, False\n    if slope * 100.0 > 20.0:\n        return 'WARN: slope > 20%',   True, False\n    if check_flow:\n        if design_ls > qfull_ls:\n            return 'FAIL: UNDERSIZED', False, True\n        if design_ls > qfull_ls * 0.80:\n            return 'WARN: >80% capacity', True, False\n    return 'OK', False, False\n\n# \u2500\u2500 main \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\ndesign_flow_ls = IN[0] or 0\nrun_flag       = IN[1]\n\nif not run_flag:\n    OUT = \"Set Run = True to execute.\"\nelse:\n    try:\n        doc       = AcadApp.DocumentManager.MdiActiveDocument\n        db        = doc.Database\n        civil_doc = CivilApplication.ActiveDocument\n\n        network_ids = civil_doc.GetPipeNetworkIds()\n        if network_ids.Count == 0:\n            OUT = \"No pipe networks found in this drawing.\"\n        else:\n            check_flow = design_flow_ls > 0\n            lines      = []\n            warnings   = 0\n            failures   = 0\n\n            tr = db.TransactionManager.StartTransaction()\n            try:\n                for net_id in network_ids:\n                    network = tr.GetObject(net_id, OpenMode.ForRead)\n                    lines.append('\\n== Network: {} =='.format(network.Name))\n\n                    hdr = '{:<28} {:>7} {:>8} {:>10}'.format(\n                        'Pipe', 'Dia mm', 'Slope%', 'QFull L/s')\n                    if check_flow:\n                        hdr += ' {:>10}'.format('QDes L/s')\n                    hdr += '  {:<24}'.format('Status')\n                    lines.append(hdr)\n                    lines.append('-' * (88 if check_flow else 75))\n\n                    for pipe_id in network.GetPipeIds():\n                        pipe  = tr.GetObject(pipe_id, OpenMode.ForRead)\n                        n     = get_n(pipe.PipeMaterial)\n                        slope = pipe.Slope\n                        dia   = pipe.InnerDiameterOrWidth\n                        qfull = full_flow_ls(dia, slope, n)\n\n                        status, is_warn, is_fail = evaluate_status(\n                            slope, design_flow_ls, qfull, check_flow)\n                        if is_warn: warnings += 1\n                        if is_fail: failures += 1\n\n                        row = '{:<28} {:>7.0f} {:>8.3f} {:>10.2f}'.format(\n                            pipe.Name or '', dia * 1000.0, slope * 100.0, qfull)\n                        if check_flow:\n                            row += ' {:>10.2f}'.format(design_flow_ls)\n                        row += '  {:<24}'.format(status)\n                        lines.append(row)\n\n                        if is_fail and check_flow:\n                            sug   = recommend_dia_m(design_flow_ls, slope, n)\n                            sug_q = full_flow_ls(sug, slope, n)\n                            lines.append('   Recommend: {:.0f} mm  '\n                                         '(QFull = {:.2f} L/s)'.format(sug * 1000.0, sug_q))\n\n                tr.Commit()\n            except Exception:\n                tr.Abort()\n                raise\n\n            lines.append('\\nSizing check complete.  '\n                         'Warnings: {}   Failures: {}'.format(warnings, failures))\n            OUT = '\\n'.join(lines)\n\n    except Exception as ex:\n        OUT = 'Error: ' + str(ex)\n",
+            "Engine": "CPython3",
+            "EngineName": "CPython3",
+            "VariableInputPorts": true,
+            "Id": "py-main-0000-0000-0000-000000000001",
+            "Inputs": [
+                {
+                    "Id": "py-main-0000-0000-0000-000000000010",
+                    "Name": "IN[0]",
+                    "Description": "design_flow_ls",
+                    "UsingDefaultValue": false,
+                    "Level": 2,
+                    "UseLevels": false,
+                    "KeepListStructure": false
+                },
+                {
+                    "Id": "py-main-0000-0000-0000-000000000011",
+                    "Name": "IN[1]",
+                    "Description": "run",
+                    "UsingDefaultValue": false,
+                    "Level": 2,
+                    "UseLevels": false,
+                    "KeepListStructure": false
+                }
+            ],
+            "Outputs": [
+                {
+                    "Id": "py-main-0000-0000-0000-000000000099",
+                    "Name": "OUT",
+                    "Description": "Result",
+                    "UsingDefaultValue": false,
+                    "Level": 2,
+                    "UseLevels": false,
+                    "KeepListStructure": false
+                }
+            ],
+            "Replication": "Disabled",
+            "Description": "Civil 3D \u2013 Manning's pipe sizing check. Flags under-sized pipes and recommends next standard diameter."
+        },
+        {
+            "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+            "NodeType": "ExtensionNode",
+            "Id": "watch-000-0000-0000-0000-000000000001",
+            "Inputs": [
+                {
+                    "Id": "watch-000-0000-0000-0000-000000000002",
+                    "Name": "",
+                    "Description": "Node to evaluate.",
+                    "UsingDefaultValue": false,
+                    "Level": 2,
+                    "UseLevels": false,
+                    "KeepListStructure": false
+                }
+            ],
+            "Outputs": [
+                {
+                    "Id": "watch-000-0000-0000-0000-000000000003",
+                    "Name": "",
+                    "Description": "Watch contents.",
+                    "UsingDefaultValue": false,
+                    "Level": 2,
+                    "UseLevels": false,
+                    "KeepListStructure": false
+                }
+            ],
+            "Replication": "Disabled",
+            "Description": "Visualize the result."
+        }
+    ],
+    "Connectors": [
+        {
+            "Start": "in-flow--0000-0000-0000-000000000002",
+            "End": "py-main-0000-0000-0000-000000000010",
+            "Id": "conn-0000-0000-0000-0000-000000000001"
+        },
+        {
+            "Start": "in-run---0000-0000-0000-000000000004",
+            "End": "py-main-0000-0000-0000-000000000011",
+            "Id": "conn-0001-0000-0000-0000-000000000001"
+        },
+        {
+            "Start": "py-main-0000-0000-0000-000000000099",
+            "End": "watch-000-0000-0000-0000-000000000002",
+            "Id": "conn-out-0000-0000-0000-000000000001"
+        }
+    ],
+    "Dependencies": [],
+    "NodeLibraryDependencies": [
+        {
+            "Name": "PythonNodeModels",
+            "Version": "3.0.0",
+            "ReferenceType": "Package",
+            "Nodes": [
+                "py-main-0000-0000-0000-000000000001"
+            ]
+        }
+    ],
+    "Thumbnail": "",
+    "GraphDocumentationURL": null,
+    "Bindings": [],
+    "View": {
+        "Dynamo": {
+            "ScaleFactor": 1.0,
+            "HasRunWithoutCrash": true,
+            "IsVisibleInDynamoLibrary": true,
+            "Version": "2.19.0.0",
+            "RunType": "Manual",
+            "RunPeriod": "1000"
+        },
+        "Camera": {
+            "Name": "_Background Preview",
+            "EyeX": -17.0,
+            "EyeY": 24.0,
+            "EyeZ": 50.0,
+            "LookX": 12.0,
+            "LookY": -13.0,
+            "LookZ": -58.0,
+            "UpX": 0.0,
+            "UpY": 1.0,
+            "UpZ": 0.0
+        },
+        "ConnectorPins": [],
+        "NodeViews": [
+            {
+                "Name": "Design Flow (L/s) \u2013 0 = capacity display only",
+                "ShowGeometry": true,
+                "Id": "in-flow--0000-0000-0000-000000000001",
+                "IsSetAsInput": true,
+                "IsSetAsOutput": false,
+                "Excluded": false,
+                "X": 50.0,
+                "Y": 200.0
+            },
+            {
+                "Name": "Run",
+                "ShowGeometry": true,
+                "Id": "in-run---0000-0000-0000-000000000003",
+                "IsSetAsInput": true,
+                "IsSetAsOutput": false,
+                "Excluded": false,
+                "X": 50.0,
+                "Y": 340.0
+            },
+            {
+                "Name": "Civil3D_PipeNetworkSize",
+                "ShowGeometry": true,
+                "Id": "py-main-0000-0000-0000-000000000001",
+                "IsSetAsInput": false,
+                "IsSetAsOutput": false,
+                "Excluded": false,
+                "X": 450.0,
+                "Y": 200.0
+            },
+            {
+                "Name": "Result",
+                "ShowGeometry": true,
+                "Id": "watch-000-0000-0000-0000-000000000001",
+                "IsSetAsInput": false,
+                "IsSetAsOutput": false,
+                "Excluded": false,
+                "X": 850.0,
+                "Y": 200.0
+            }
+        ],
+        "Annotations": [],
+        "X": 0.0,
+        "Y": 0.0,
+        "Zoom": 1.0
+    }
+}
