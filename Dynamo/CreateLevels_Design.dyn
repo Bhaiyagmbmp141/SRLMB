@@ -13,7 +13,7 @@
     {
       "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
       "NodeType": "CodeBlockNode",
-      "Code": "count = 52;\nfloorHeight = 13.0;\nbaseElevation = 0.0;\nprefix = \"Level \";\nindices = 0..(count - 1);\nelevations = baseElevation + indices * floorHeight;\nnames = prefix + (indices + 1);",
+      "Code": "count = 52;\nfloorHeight = 13.0;\nbaseElevation = 0.0;\nprefix = \"Level \";\nindices = 0..(count - 1);\nelevations = baseElevation + indices * floorHeight;\nnames = [Imperative](count, prefix)\n{\n    result = {};\n    for (i in 0..(count - 1))\n    {\n        result[i] = prefix + ToString(i + 1);\n    }\n    return = result;\n};",
       "Id": "00000001-0000-0000-0000-000000000001",
       "Inputs": [],
       "Outputs": [
