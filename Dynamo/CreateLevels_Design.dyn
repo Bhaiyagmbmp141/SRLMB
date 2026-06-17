@@ -19,8 +19,8 @@
       "Outputs": [
         {
           "Id": "00000001-0000-0000-0000-000000000002",
-          "Name": "count",
-          "Description": "Value of expression in line 1",
+          "Name": "",
+          "Description": "Value of expression at line 1",
           "UsingDefaultValue": false,
           "Level": 2,
           "UseLevels": false,
@@ -28,8 +28,8 @@
         },
         {
           "Id": "00000001-0000-0000-0000-000000000003",
-          "Name": "floorHeight",
-          "Description": "Value of expression in line 2",
+          "Name": "",
+          "Description": "Value of expression at line 2",
           "UsingDefaultValue": false,
           "Level": 2,
           "UseLevels": false,
@@ -37,8 +37,8 @@
         },
         {
           "Id": "00000001-0000-0000-0000-000000000004",
-          "Name": "baseElevation",
-          "Description": "Value of expression in line 3",
+          "Name": "",
+          "Description": "Value of expression at line 3",
           "UsingDefaultValue": false,
           "Level": 2,
           "UseLevels": false,
@@ -46,8 +46,8 @@
         },
         {
           "Id": "00000001-0000-0000-0000-000000000005",
-          "Name": "prefix",
-          "Description": "Value of expression in line 4",
+          "Name": "",
+          "Description": "Value of expression at line 4",
           "UsingDefaultValue": false,
           "Level": 2,
           "UseLevels": false,
@@ -55,8 +55,8 @@
         },
         {
           "Id": "00000001-0000-0000-0000-000000000006",
-          "Name": "indices",
-          "Description": "Value of expression in line 5",
+          "Name": "",
+          "Description": "Value of expression at line 5",
           "UsingDefaultValue": false,
           "Level": 2,
           "UseLevels": false,
@@ -64,8 +64,8 @@
         },
         {
           "Id": "00000001-0000-0000-0000-000000000007",
-          "Name": "elevations",
-          "Description": "Value of expression in line 6",
+          "Name": "",
+          "Description": "Value of expression at line 6",
           "UsingDefaultValue": false,
           "Level": 2,
           "UseLevels": false,
@@ -73,8 +73,8 @@
         },
         {
           "Id": "00000001-0000-0000-0000-000000000008",
-          "Name": "names",
-          "Description": "Value of expression in line 7",
+          "Name": "",
+          "Description": "Value of expression at line 7",
           "UsingDefaultValue": false,
           "Level": 2,
           "UseLevels": false,
@@ -82,7 +82,7 @@
         }
       ],
       "Replication": "Disabled",
-      "Description": "DesignScript: edit count / floorHeight / baseElevation / prefix here, then builds the elevation list (base + index * height) and the matching \"Level N\" name list."
+      "Description": "Allows for DesignScript code to be authored directly"
     },
 
     {
@@ -254,7 +254,7 @@
       "ScaleFactor": 1.0,
       "HasRunWithoutCrash": false,
       "IsVisibleInDynamoLibrary": true,
-      "Version": "3.0.0.0",
+      "Version": "2.19.3.6543",
       "RunType": "Manual",
       "RunPeriod": "1000"
     },
