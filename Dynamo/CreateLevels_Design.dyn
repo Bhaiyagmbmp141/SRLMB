@@ -1,0 +1,569 @@
+{
+  "Uuid": "c3d4e5f6-a7b8-4901-bcde-123456789031",
+  "IsCustomNode": false,
+  "Description": "Creates 52 Revit Levels using a native DesignScript code block to generate elevations and names, then Level.ByElevationAndName to build the levels. No Python required. Elevation and floor-height inputs are in Revit internal units (decimal feet) regardless of the project's display units.",
+  "Name": "CreateLevels_Design",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NodeType": "DoubleInputNode",
+      "InputValue": 52.0,
+      "Id": "00000001-0000-0000-0000-000000000001",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "00000001-0000-0000-0000-000000000002",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Number of levels to create."
+    },
+
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NodeType": "DoubleInputNode",
+      "InputValue": 13.0,
+      "Id": "00000002-0000-0000-0000-000000000001",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "00000002-0000-0000-0000-000000000002",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Floor-to-floor height. Revit's internal length unit is always decimal feet, so this value is in feet even on a metric template (13.0 ft ~= 4 m)."
+    },
+
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NodeType": "DoubleInputNode",
+      "InputValue": 0.0,
+      "Id": "00000003-0000-0000-0000-000000000001",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "00000003-0000-0000-0000-000000000002",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Elevation of the first level, in decimal feet (Revit internal units)."
+    },
+
+    {
+      "ConcreteType": "CoreNodeModels.Input.StringInput, CoreNodeModels",
+      "NodeType": "StringInputNode",
+      "InputValue": "Level ",
+      "Id": "00000004-0000-0000-0000-000000000001",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "00000004-0000-0000-0000-000000000002",
+          "Name": "",
+          "Description": "String",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Name prefix. Must not collide with level names already in the project (e.g. the template's default \"Level 1\"/\"Level 2\"), or Revit will reject the duplicate name."
+    },
+
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "indices = 0..(count - 1);\nelevations = baseElevation + indices * floorHeight;\nnames = prefix + (indices + 1);",
+      "Id": "00000005-0000-0000-0000-000000000001",
+      "Inputs": [
+        {
+          "Id": "00000005-0000-0000-0000-000000000002",
+          "Name": "count",
+          "Description": "count",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "00000005-0000-0000-0000-000000000003",
+          "Name": "baseElevation",
+          "Description": "baseElevation",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "00000005-0000-0000-0000-000000000004",
+          "Name": "floorHeight",
+          "Description": "floorHeight",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "00000005-0000-0000-0000-000000000005",
+          "Name": "prefix",
+          "Description": "prefix",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "00000005-0000-0000-0000-000000000006",
+          "Name": "indices",
+          "Description": "Value of expression in line 1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "00000005-0000-0000-0000-000000000007",
+          "Name": "elevations",
+          "Description": "Value of expression in line 2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "00000005-0000-0000-0000-000000000008",
+          "Name": "names",
+          "Description": "Value of expression in line 3",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "DesignScript: builds the elevation list (base + index * height) and the matching \"Level N\" name list for every level to be created."
+    },
+
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Revit.Elements.Level.ByElevationAndName@double,string",
+      "Id": "00000006-0000-0000-0000-000000000001",
+      "Inputs": [
+        {
+          "Id": "00000006-0000-0000-0000-000000000002",
+          "Name": "elevation",
+          "Description": "double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "00000006-0000-0000-0000-000000000003",
+          "Name": "name",
+          "Description": "string",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "00000006-0000-0000-0000-000000000004",
+          "Name": "Level",
+          "Description": "Level",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Creates one Revit Level per elevation/name pair (Auto replication zips the two lists into 52 calls)."
+    },
+
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "DSCore.List.Count@var[]..[]",
+      "Id": "00000007-0000-0000-0000-000000000001",
+      "Inputs": [
+        {
+          "Id": "00000007-0000-0000-0000-000000000002",
+          "Name": "list",
+          "Description": "List to get the item count of.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "00000007-0000-0000-0000-000000000003",
+          "Name": "count",
+          "Description": "List length.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Counts the created levels, to confirm all 52 were built."
+    },
+
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "00000008-0000-0000-0000-000000000001",
+      "Inputs": [
+        {
+          "Id": "00000008-0000-0000-0000-000000000002",
+          "Name": "",
+          "Description": "Node to evaluate.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "00000008-0000-0000-0000-000000000003",
+          "Name": "",
+          "Description": "Watch contents.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Created Level elements."
+    },
+
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "00000009-0000-0000-0000-000000000001",
+      "Inputs": [
+        {
+          "Id": "00000009-0000-0000-0000-000000000002",
+          "Name": "",
+          "Description": "Node to evaluate.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "00000009-0000-0000-0000-000000000003",
+          "Name": "",
+          "Description": "Watch contents.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Total number of levels created (expected 52)."
+    }
+
+  ],
+  "Connectors": [
+    {
+      "Start": "00000001-0000-0000-0000-000000000002",
+      "End":   "00000005-0000-0000-0000-000000000002",
+      "Id":    "c0000001-0000-0000-0000-000000000001"
+    },
+    {
+      "Start": "00000003-0000-0000-0000-000000000002",
+      "End":   "00000005-0000-0000-0000-000000000003",
+      "Id":    "c0000001-0000-0000-0000-000000000002"
+    },
+    {
+      "Start": "00000002-0000-0000-0000-000000000002",
+      "End":   "00000005-0000-0000-0000-000000000004",
+      "Id":    "c0000001-0000-0000-0000-000000000003"
+    },
+    {
+      "Start": "00000004-0000-0000-0000-000000000002",
+      "End":   "00000005-0000-0000-0000-000000000005",
+      "Id":    "c0000001-0000-0000-0000-000000000004"
+    },
+    {
+      "Start": "00000005-0000-0000-0000-000000000007",
+      "End":   "00000006-0000-0000-0000-000000000002",
+      "Id":    "c0000001-0000-0000-0000-000000000005"
+    },
+    {
+      "Start": "00000005-0000-0000-0000-000000000008",
+      "End":   "00000006-0000-0000-0000-000000000003",
+      "Id":    "c0000001-0000-0000-0000-000000000006"
+    },
+    {
+      "Start": "00000006-0000-0000-0000-000000000004",
+      "End":   "00000008-0000-0000-0000-000000000002",
+      "Id":    "c0000001-0000-0000-0000-000000000007"
+    },
+    {
+      "Start": "00000006-0000-0000-0000-000000000004",
+      "End":   "00000007-0000-0000-0000-000000000002",
+      "Id":    "c0000001-0000-0000-0000-000000000008"
+    },
+    {
+      "Start": "00000007-0000-0000-0000-000000000003",
+      "End":   "00000009-0000-0000-0000-000000000002",
+      "Id":    "c0000001-0000-0000-0000-000000000009"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": false,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "3.0.0.0",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "_Background Preview",
+      "EyeX": -17.0,
+      "EyeY": 24.0,
+      "EyeZ": 50.0,
+      "LookX": 12.0,
+      "LookY": -13.0,
+      "LookZ": -58.0,
+      "UpX": 0.0,
+      "UpY": 1.0,
+      "UpZ": 0.0
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Name": "Number of Levels  →  52",
+        "ShowGeometry": true,
+        "Id": "00000001-0000-0000-0000-000000000001",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 100.0,
+        "Y": 260.0
+      },
+      {
+        "Name": "Floor-to-Floor Height (ft)  →  13.0",
+        "ShowGeometry": true,
+        "Id": "00000002-0000-0000-0000-000000000001",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 100.0,
+        "Y": 380.0
+      },
+      {
+        "Name": "Base Elevation (ft)  →  0.0",
+        "ShowGeometry": true,
+        "Id": "00000003-0000-0000-0000-000000000001",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 100.0,
+        "Y": 500.0
+      },
+      {
+        "Name": "Level Name Prefix  →  \"Level \"",
+        "ShowGeometry": true,
+        "Id": "00000004-0000-0000-0000-000000000001",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 100.0,
+        "Y": 620.0
+      },
+      {
+        "Name": "Build Elevations + Names",
+        "ShowGeometry": true,
+        "Id": "00000005-0000-0000-0000-000000000001",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 520.0,
+        "Y": 380.0
+      },
+      {
+        "Name": "Level.ByElevationAndName",
+        "ShowGeometry": true,
+        "Id": "00000006-0000-0000-0000-000000000001",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 900.0,
+        "Y": 380.0
+      },
+      {
+        "Name": "List.Count",
+        "ShowGeometry": true,
+        "Id": "00000007-0000-0000-0000-000000000001",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 900.0,
+        "Y": 640.0
+      },
+      {
+        "Name": "Watch  |  Created Levels",
+        "ShowGeometry": true,
+        "Id": "00000008-0000-0000-0000-000000000001",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": true,
+        "Excluded": false,
+        "X": 1260.0,
+        "Y": 300.0
+      },
+      {
+        "Name": "Watch  |  Level Count",
+        "ShowGeometry": true,
+        "Id": "00000009-0000-0000-0000-000000000001",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": true,
+        "Excluded": false,
+        "X": 1260.0,
+        "Y": 640.0
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "anno0001-0000-0000-0000-000000000001",
+        "Title": "Create 52 Levels  –  Revit 2027 (native DesignScript, no Python)",
+        "DescriptionText": "Set inputs  →  Click Run  →  Check Watch nodes. Elevation/height inputs are decimal feet (Revit's internal unit) even on a metric project.",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [],
+        "HasNestedGroups": false,
+        "Left": 80.0,
+        "Top": 100.0,
+        "Width": 1300.0,
+        "Height": 130.0,
+        "FontSize": 36.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 100.0,
+        "InitialHeight": 130.0,
+        "TextblockHeight": 50.0,
+        "Background": "#FF9F4FBF"
+      },
+      {
+        "Id": "anno0002-0000-0000-0000-000000000001",
+        "Title": "INPUTS",
+        "DescriptionText": "Count, floor height, base elevation and name prefix. Change the prefix if the project already has levels named \"Level 1\", \"Level 2\"… to avoid duplicate-name errors.",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "00000001-0000-0000-0000-000000000001",
+          "00000002-0000-0000-0000-000000000001",
+          "00000003-0000-0000-0000-000000000001",
+          "00000004-0000-0000-0000-000000000001"
+        ],
+        "HasNestedGroups": false,
+        "Left": 80.0,
+        "Top": 260.0,
+        "Width": 380.0,
+        "Height": 500.0,
+        "FontSize": 28.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 260.0,
+        "InitialHeight": 500.0,
+        "TextblockHeight": 40.0,
+        "Background": "#FF48B9FF"
+      },
+      {
+        "Id": "anno0003-0000-0000-0000-000000000001",
+        "Title": "PROCESS",
+        "DescriptionText": "DesignScript code block computes elevations/names, then Level.ByElevationAndName creates each Level (Auto replication = one call per pair).",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "00000005-0000-0000-0000-000000000001",
+          "00000006-0000-0000-0000-000000000001",
+          "00000007-0000-0000-0000-000000000001"
+        ],
+        "HasNestedGroups": false,
+        "Left": 480.0,
+        "Top": 300.0,
+        "Width": 380.0,
+        "Height": 480.0,
+        "FontSize": 28.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 300.0,
+        "InitialHeight": 480.0,
+        "TextblockHeight": 40.0,
+        "Background": "#FF71C6A8"
+      },
+      {
+        "Id": "anno0004-0000-0000-0000-000000000001",
+        "Title": "OUTPUTS",
+        "DescriptionText": "Review the created Level elements and confirm the count equals 52.",
+        "IsExpanded": true,
+        "WidthAdjustment": 0.0,
+        "HeightAdjustment": 0.0,
+        "Nodes": [
+          "00000008-0000-0000-0000-000000000001",
+          "00000009-0000-0000-0000-000000000001"
+        ],
+        "HasNestedGroups": false,
+        "Left": 1220.0,
+        "Top": 260.0,
+        "Width": 330.0,
+        "Height": 480.0,
+        "FontSize": 28.0,
+        "GroupStyleId": "00000000-0000-0000-0000-000000000000",
+        "InitialTop": 260.0,
+        "InitialHeight": 480.0,
+        "TextblockHeight": 40.0,
+        "Background": "#FFFFC15E"
+      }
+    ],
+    "X": 0.0,
+    "Y": 0.0,
+    "Zoom": 0.75
+  }
+}
