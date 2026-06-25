@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RevitAddIns>
+  <AddIn Type="Application">
+    <Name>SRLMB Model QA/QC</Name>
+    <FullClassName>SRLMB.QAQC.App</FullClassName>
+    <Assembly>SRLMB.QAQC.dll</Assembly>
+    <AddInId>cbfb66cb-76c5-4086-8035-e0997db174e7</AddInId>
+    <VendorId>SRLMB</VendorId>
+    <VendorDescription>SRLMB – Model QA/QC Tools for Revit 2027</VendorDescription>
+  </AddIn>
+</RevitAddIns>

@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>SRLMB.QAQC</AssemblyName>
+    <RootNamespace>SRLMB.QAQC</RootNamespace>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <Configurations>Debug;Release</Configurations>
+    <Platforms>x64</Platforms>
+  </PropertyGroup>
+
+  <!-- Revit 2027 ships on the .NET 8 runtime, so add-ins must target net8.0-windows
+       instead of the legacy .NET Framework 4.8 used for Revit 2024 and earlier.
+       Override the install path with the RevitApiDir env var or MSBuild property
+       if Revit 2027 is installed somewhere other than the default location. -->
+  <PropertyGroup Condition="'$(RevitApiDir)' == ''">
+    <RevitApiDir>C:\Program Files\Autodesk\Revit 2027</RevitApiDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="RevitAPI">
+      <HintPath>$(RevitApiDir)\RevitAPI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="RevitAPIUI">
+      <HintPath>$(RevitApiDir)\RevitAPIUI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!-- Copy the .addin manifest next to the built DLL -->
+  <ItemGroup>
+    <None Update="Resources\SRLMB.QAQC.addin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
