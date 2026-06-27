@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0-windows</TargetFramework>
+    <TargetFramework>net10.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
     <AssemblyName>SRLMB.QAQC</AssemblyName>
     <RootNamespace>SRLMB.QAQC</RootNamespace>
@@ -13,8 +13,10 @@
     <Platforms>x64</Platforms>
   </PropertyGroup>
 
-  <!-- Revit 2027 ships on the .NET 8 runtime, so add-ins must target net8.0-windows
-       instead of the legacy .NET Framework 4.8 used for Revit 2024 and earlier.
+  <!-- Revit 2027's RevitAPI/RevitAPIUI assemblies are built against System.Runtime
+       10.0.0.0, so add-ins must target net10.0-windows (not net8.0-windows, and not
+       the legacy .NET Framework 4.8 used for Revit 2024 and earlier) or the compiler
+       fails with CS1705 assembly-version mismatches.
        Override the install path with the RevitApiDir env var or MSBuild property
        if Revit 2027 is installed somewhere other than the default location. -->
   <PropertyGroup Condition="'$(RevitApiDir)' == ''">

@@ -6,12 +6,13 @@ exportable report.
 
 ## Why a separate project
 
-Revit 2025 and later run on the .NET 8 runtime, replacing the .NET Framework
-4.8 used by Revit 2024 and earlier. This project targets `net8.0-windows`
-for Revit 2027, while `SRLMB.AddIn` (the original Comments-parameter tool)
-stays on `net48` for Revit 2024. Each Revit major version needs an add-in
-built against the matching API/runtime, so the two live as separate
-projects rather than one multi-targeted assembly.
+Revit 2027's RevitAPI/RevitAPIUI assemblies are built against
+`System.Runtime, Version=10.0.0.0`, so add-ins need the .NET 10 runtime.
+This project targets `net10.0-windows` for Revit 2027, while `SRLMB.AddIn`
+(the original Comments-parameter tool) stays on `net48` for Revit 2024.
+Each Revit major version needs an add-in built against the matching
+API/runtime, so the two live as separate projects rather than one
+multi-targeted assembly.
 
 ## Checks included
 
@@ -44,6 +45,10 @@ Add a new check by implementing the interface and registering it in
 
 ## Building
 
+Requires the **.NET 10 SDK** (not .NET 8) — Revit 2027's RevitAPI.dll
+depends on `System.Runtime, Version=10.0.0.0`, so building against an
+older SDK fails with `CS1705` assembly-version-mismatch errors.
+
 ```
 dotnet build SRLMB.QAQC.csproj -c Release
 ```
@@ -74,7 +79,7 @@ install into `%ProgramData%\...` instead (may need an elevated prompt), or
 
 ### Option B: manual copy
 
-Copy `bin\Release\net8.0-windows\SRLMB.QAQC.dll` and
+Copy `bin\Release\net10.0-windows\SRLMB.QAQC.dll` and
 `Resources\SRLMB.QAQC.addin` into:
 
 ```
