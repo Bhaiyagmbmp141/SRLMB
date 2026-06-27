@@ -34,9 +34,13 @@
     </Reference>
   </ItemGroup>
 
-  <!-- Copy the .addin manifest next to the built DLL -->
+  <!-- Copy the .addin manifest next to the built DLL. <Link> flattens it to
+       the output root; without it the file keeps its Resources\ subfolder in
+       the output, and Revit (which only scans the top level of the Addins
+       folder) would never see the manifest. -->
   <ItemGroup>
     <None Update="Resources\SRLMB.QAQC.addin">
+      <Link>SRLMB.QAQC.addin</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

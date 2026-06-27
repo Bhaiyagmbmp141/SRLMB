@@ -53,9 +53,9 @@ if ($LASTEXITCODE -ne 0) {
     throw "dotnet build failed with exit code $LASTEXITCODE."
 }
 
-# The build output folder depends on the configuration and platform
-# (e.g. bin\x64\Release because the project sets <Platforms>x64</Platforms>),
-# so locate the built DLL under bin\ rather than assuming a fixed path.
+# The build output folder depends on configuration/platform (bin\Release,
+# bin\x64\Release, etc.), so locate the built files under bin\ rather than
+# assuming a fixed path.
 $binRoot = Join-Path $projectDir "bin"
 $dll = Get-ChildItem -Path $binRoot -Recurse -Filter "SRLMB.QAQC.dll" -ErrorAction SilentlyContinue |
     Where-Object { $_.FullName -like "*\$Configuration\*" } |
@@ -67,10 +67,19 @@ if (-not $dll) {
 }
 
 $outputDir = $dll.DirectoryName
-$addin = Join-Path $outputDir "SRLMB.QAQC.addin"
 
-if (-not (Test-Path $addin)) {
-    throw "Found SRLMB.QAQC.dll in $outputDir but SRLMB.QAQC.addin is missing next to it."
+# The .addin manifest should sit next to the DLL, but fall back to searching
+# the build tree (it may have been copied into a Resources\ subfolder).
+$addin = Get-ChildItem -Path $outputDir -Filter "SRLMB.QAQC.addin" -ErrorAction SilentlyContinue |
+    Select-Object -First 1
+if (-not $addin) {
+    $addin = Get-ChildItem -Path $binRoot -Recurse -Filter "SRLMB.QAQC.addin" -ErrorAction SilentlyContinue |
+        Where-Object { $_.FullName -like "*\$Configuration\*" } |
+        Sort-Object LastWriteTime -Descending |
+        Select-Object -First 1
+}
+if (-not $addin) {
+    throw "Could not find SRLMB.QAQC.addin under $binRoot. Rebuild and try again."
 }
 
 if ($AllUsers) {
@@ -83,6 +92,13 @@ else {
 New-Item -ItemType Directory -Force -Path $addinsRoot | Out-Null
 
 Write-Host "Installing to $addinsRoot..." -ForegroundColor Cyan
-Copy-Item -Path (Join-Path $outputDir '*') -Destination $addinsRoot -Force
+
+# Copy the assembly plus its runtime sidecar files (.deps.json,
+# .runtimeconfig.json, any dependency DLLs/PDBs) and the manifest into the
+# top level of the Addins folder, which is the only level Revit scans.
+Get-ChildItem -Path $outputDir -File |
+    Where-Object { $_.Extension -in '.dll', '.pdb', '.json' } |
+    ForEach-Object { Copy-Item -Path $_.FullName -Destination $addinsRoot -Force }
+Copy-Item -Path $addin.FullName -Destination (Join-Path $addinsRoot "SRLMB.QAQC.addin") -Force
 
 Write-Host "Done. Restart Revit 2027 (choose 'Always Load' if prompted) to see the 'SRLMB QA/QC' panel on the Add-Ins tab." -ForegroundColor Green
