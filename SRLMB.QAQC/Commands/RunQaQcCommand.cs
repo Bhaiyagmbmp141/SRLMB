@@ -1,3 +1,4 @@
+using System;
 using System.Windows.Interop;
 using Autodesk.Revit.Attributes;
 using Autodesk.Revit.DB;
@@ -12,20 +13,38 @@ namespace SRLMB.QAQC.Commands
     {
         public Result Execute(ExternalCommandData commandData, ref string message, ElementSet elements)
         {
-            UIDocument? uidoc = commandData.Application.ActiveUIDocument;
-
-            if (uidoc == null)
+            try
             {
-                TaskDialog.Show("SRLMB – Model QA/QC", "Open a project document first.");
-                return Result.Cancelled;
+                UIDocument? uidoc = commandData.Application.ActiveUIDocument;
+
+                if (uidoc?.Document == null)
+                {
+                    TaskDialog.Show("SRLMB – Model QA/QC", "Open a project document first.");
+                    return Result.Cancelled;
+                }
+
+                var window = new QaQcResultsWindow(uidoc);
+                new WindowInteropHelper(window).Owner = commandData.Application.MainWindowHandle;
+
+                window.ShowDialog();
+
+                return Result.Succeeded;
             }
+            catch (Exception ex)
+            {
+                // Surface the real exception instead of letting Revit show the
+                // generic "Contact the provider" dialog, which hides the cause.
+                var dialog = new TaskDialog("SRLMB – Model QA/QC Error")
+                {
+                    MainInstruction = "The QA/QC command failed to run.",
+                    MainContent = ex.Message,
+                    ExpandedContent = ex.ToString()
+                };
+                dialog.Show();
 
-            var window = new QaQcResultsWindow(uidoc);
-            new WindowInteropHelper(window).Owner = commandData.Application.MainWindowHandle;
-
-            window.ShowDialog();
-
-            return Result.Succeeded;
+                message = ex.Message;
+                return Result.Failed;
+            }
         }
     }
 }
