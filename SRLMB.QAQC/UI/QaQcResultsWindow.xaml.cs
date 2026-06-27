@@ -112,12 +112,18 @@ namespace SRLMB.QAQC.UI
 
         private void ApplySeverityFilter()
         {
+            // The severity checkboxes have IsChecked="True" set in XAML, which
+            // raises their Checked event during InitializeComponent() — before
+            // ResultsGrid further down in the XAML has been created. Guard
+            // against that so this no-ops until the window is fully built.
+            if (ResultsGrid?.ItemsSource == null) return;
+
             ICollectionView? view = CollectionViewSource.GetDefaultView(ResultsGrid.ItemsSource);
             if (view == null) return;
 
-            bool showErrors = ShowErrors.IsChecked == true;
-            bool showWarnings = ShowWarnings.IsChecked == true;
-            bool showInfo = ShowInfo.IsChecked == true;
+            bool showErrors = ShowErrors?.IsChecked == true;
+            bool showWarnings = ShowWarnings?.IsChecked == true;
+            bool showInfo = ShowInfo?.IsChecked == true;
 
             view.Filter = obj =>
             {
