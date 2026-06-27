@@ -42,6 +42,13 @@ if (-not (Test-Path $csproj)) {
     throw "Could not find SRLMB.QAQC.csproj next to this script ($projectDir)."
 }
 
+# Revit locks the add-in DLL while it is running, so the copy step would fail
+# with "the process cannot access the file ... because it is being used by
+# another process". Stop early with a clear message instead.
+if (Get-Process -Name "Revit" -ErrorAction SilentlyContinue) {
+    throw "Revit is currently running and has the add-in DLL locked. Close Revit 2027 completely, then re-run this script."
+}
+
 $buildArgs = @($csproj, "-c", $Configuration)
 if ($RevitApiDir) {
     $buildArgs += "-p:RevitApiDir=$RevitApiDir"
