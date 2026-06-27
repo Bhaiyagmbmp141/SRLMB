@@ -79,7 +79,7 @@ install into `%ProgramData%\...` instead (may need an elevated prompt), or
 
 ### Option B: manual copy
 
-Copy `bin\Release\net10.0-windows\SRLMB.QAQC.dll` and
+Copy `bin\Release\SRLMB.QAQC.dll` and
 `Resources\SRLMB.QAQC.addin` into:
 
 ```

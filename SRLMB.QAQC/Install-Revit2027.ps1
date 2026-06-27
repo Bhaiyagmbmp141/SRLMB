@@ -53,7 +53,7 @@ if ($LASTEXITCODE -ne 0) {
     throw "dotnet build failed with exit code $LASTEXITCODE."
 }
 
-$outputDir = Join-Path $projectDir "bin\$Configuration\net10.0-windows"
+$outputDir = Join-Path $projectDir "bin\$Configuration"
 $dll = Join-Path $outputDir "SRLMB.QAQC.dll"
 $addin = Join-Path $outputDir "SRLMB.QAQC.addin"
 
