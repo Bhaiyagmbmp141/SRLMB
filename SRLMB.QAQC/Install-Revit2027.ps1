@@ -53,12 +53,24 @@ if ($LASTEXITCODE -ne 0) {
     throw "dotnet build failed with exit code $LASTEXITCODE."
 }
 
-$outputDir = Join-Path $projectDir "bin\$Configuration"
-$dll = Join-Path $outputDir "SRLMB.QAQC.dll"
+# The build output folder depends on the configuration and platform
+# (e.g. bin\x64\Release because the project sets <Platforms>x64</Platforms>),
+# so locate the built DLL under bin\ rather than assuming a fixed path.
+$binRoot = Join-Path $projectDir "bin"
+$dll = Get-ChildItem -Path $binRoot -Recurse -Filter "SRLMB.QAQC.dll" -ErrorAction SilentlyContinue |
+    Where-Object { $_.FullName -like "*\$Configuration\*" } |
+    Sort-Object LastWriteTime -Descending |
+    Select-Object -First 1
+
+if (-not $dll) {
+    throw "Could not find SRLMB.QAQC.dll under $binRoot for configuration '$Configuration'. Did the build succeed?"
+}
+
+$outputDir = $dll.DirectoryName
 $addin = Join-Path $outputDir "SRLMB.QAQC.addin"
 
-if (-not (Test-Path $dll) -or -not (Test-Path $addin)) {
-    throw "Expected build output not found in $outputDir."
+if (-not (Test-Path $addin)) {
+    throw "Found SRLMB.QAQC.dll in $outputDir but SRLMB.QAQC.addin is missing next to it."
 }
 
 if ($AllUsers) {
