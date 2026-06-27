@@ -59,6 +59,21 @@ dotnet build SRLMB.QAQC.csproj -c Release -p:RevitApiDir="D:\Autodesk\Revit 2027
 
 ## Installing
 
+### Option A: one-step script
+
+From a PowerShell prompt in this folder:
+
+```powershell
+.\Install-Revit2027.ps1
+```
+
+This builds Release and copies the output into
+`%APPDATA%\Autodesk\Revit\Addins\2027\` (current user). Pass `-AllUsers` to
+install into `%ProgramData%\...` instead (may need an elevated prompt), or
+`-RevitApiDir "<path>"` if Revit 2027 isn't in the default location.
+
+### Option B: manual copy
+
 Copy `bin\Release\net8.0-windows\SRLMB.QAQC.dll` and
 `Resources\SRLMB.QAQC.addin` into:
 
@@ -68,4 +83,7 @@ Copy `bin\Release\net8.0-windows\SRLMB.QAQC.dll` and
 
 (or point the `.addin` file's location at wherever the DLL lives via its
 own folder, then place just the `.addin` manifest in the Addins\2027
-folder). Restart Revit 2027 to load the panel.
+folder).
+
+Either way, restart Revit 2027 (choosing "Always Load" if prompted for an
+unsigned add-in) to load the panel.
